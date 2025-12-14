@@ -34,7 +34,7 @@ RUN mkdir -p /app/logs
 COPY supervisord.conf /etc/supervisord.conf
 
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN tr -d '\r' < /entrypoint.sh > /entrypoint.sh.tmp && mv /entrypoint.sh.tmp /entrypoint.sh && chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]

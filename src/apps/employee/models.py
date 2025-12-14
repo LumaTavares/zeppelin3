@@ -96,7 +96,7 @@ class SthStageExperienceLevel (Base):
         db_table = 'sth_stage_experience_level'
     
     def __str__(self):
-        return str(self.employee) +"-"+str(self.stage) +"-"+ str(self.experience_level)
+        return str(self.employee_experience_level) +"-"+str(self.stage_experience_level) +"-"+ str(self.experience_level)
 
 
 

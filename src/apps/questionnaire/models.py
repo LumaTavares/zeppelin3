@@ -42,7 +42,7 @@ class Statement(Base):
         db_table = 'statement'
     
     def __str__(self):
-        return self.code + "-"+ self.statement
+        return self.code + "-"+ self.text
 
 class FeedbackQuestionnaire(Base):
     collected_date = models.DateTimeField(auto_now_add=True)
@@ -95,4 +95,4 @@ class Answer(Base):
         db_table = 'answer'
     
     def __str__(self):
-        return self.statement.code 
+        return self.statement_answer.code 

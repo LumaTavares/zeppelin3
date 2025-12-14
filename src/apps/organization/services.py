@@ -1,4 +1,5 @@
 from django.conf import settings
+import xlrd
 from .models import State as Location, Size as OrganizationSize, OrganizationType, Organization
 
 

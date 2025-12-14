@@ -1,18 +1,39 @@
 #!/bin/bash
 set -e
 
-echo "Aguardando PostgreSQL..."
+echo "==============================================="
+echo "Iniciando aplica??o Zeppelin"
+echo "==============================================="
+
+echo ""
+echo " Aguardando PostgreSQL estar pronto..."
 while ! nc -z db_zeppelin 5432; do
-  sleep 1
+  echo "  PostgreSQL ainda n?o est? pronto... aguardando..."
+  sleep 2
 done
-echo "PostgreSQL está pronto!"
+echo " PostgreSQL est? pronto!"
 
+echo ""
+echo " Executando makemigrations..."
+python manage.py makemigrations --noinput
 
-echo "Executando make migrations..."
-python manage.py makemigrations
+echo ""
+echo " Executando migrate..."
+python manage.py migrate --noinput
 
-echo "Executando migrations..."
-python manage.py migrate
+echo ""
+echo " Coletando arquivos est?ticos..."
+python manage.py collectstatic --noinput --no-post-process
 
-echo "Iniciando aplicação..."
+echo ""
+echo " Populando banco de dados com dados iniciais..."
+python manage.py populate_data
+
+echo ""
+echo " Banco de dados pronto!"
+echo "==============================================="
+echo "Iniciando aplica??o..."
+echo "==============================================="
+echo ""
+
 exec "$@"

@@ -14,7 +14,7 @@ class QuestionnaireBase ():
         count = 0 
         for statement in Statement.objects.all():
             count = count + 1
-            hash = hashlib.md5(statement.statement.strip().encode('utf-8'))
+            hash = hashlib.md5(statement.text.strip().encode('utf-8'))
             hash = hash.hexdigest()
             self.statements[hash] = statement
 
