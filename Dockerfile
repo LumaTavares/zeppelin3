@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y \
     musl-dev \
     python3-dev \
     supervisor \
+    dos2unix \
     && rm -rf /var/lib/apt/lists/*
 
 # Instala dependências Python
@@ -34,7 +35,7 @@ RUN mkdir -p /app/logs
 COPY supervisord.conf /etc/supervisord.conf
 
 COPY entrypoint.sh /entrypoint.sh
-RUN tr -d '\r' < /entrypoint.sh > /entrypoint.sh.tmp && mv /entrypoint.sh.tmp /entrypoint.sh && chmod +x /entrypoint.sh
+RUN dos2unix /entrypoint.sh && chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 CMD ["supervisord", "-c", "/etc/supervisord.conf"]
