@@ -8,6 +8,7 @@ from apps.employee.models import (
     SthStageExperienceLevel, SthStageKnwoledgeLevel, Team
 )
 from apps.continuousstar.models import ContinuousPhase, ContinuousActivity
+from apps.practitionerseye.models import Category, Element
 
 
 class Command(BaseCommand):
@@ -476,97 +477,209 @@ class Command(BaseCommand):
             self.stdout.write(f'  {status}: Conhecimento {know_emp.id}')
 
         # ============================================================
-        # 17. Criar Questionnaire Statements
+        # 17. Criar Continuous Phases (MOVED FROM 22)
+        # ============================================================
+        self.stdout.write(self.style.WARNING('➤ Criando Continuous Phases...'))
+        phases_data = [
+            {'id': 1, 'name': 'Planejamento', 'description': 'Fase de planejamento das atividades contínuas'},
+            {'id': 2, 'name': 'Implementação', 'description': 'Fase de implementação das atividades contínuas'},
+            {'id': 3, 'name': 'Monitoramento', 'description': 'Fase de monitoramento e avaliação contínua'},
+            {'id': 4, 'name': 'Melhoria', 'description': 'Fase de melhoria contínua baseada em feedbacks'},
+        ]
+        
+        for phase_data in phases_data:
+            phase, created = ContinuousPhase.objects.get_or_create(
+                id=phase_data['id'],
+                defaults={
+                    'name': phase_data['name'],
+                    'description': phase_data['description']
+                }
+            )
+            status = '✓ Criado' if created else '→ Existente'
+            self.stdout.write(f'  {status}: {phase.name}')
+
+        # ============================================================
+        # 18. Criar Continuous Activities (MOVED FROM 23)
+        # ============================================================
+        self.stdout.write(self.style.WARNING('➤ Criando Continuous Activities...'))
+        activities_data = [
+            {'id': 1, 'name': 'Reuniões de planejamento', 'description': 'Reuniões periódicas para planejamento de atividades', 'phase_id': 1},
+            {'id': 2, 'name': 'Definição de objetivos', 'description': 'Definição clara dos objetivos das atividades contínuas', 'phase_id': 1},
+            {'id': 3, 'name': 'Desenvolvimento de soluções', 'description': 'Desenvolvimento prático das soluções planejadas', 'phase_id': 2},
+            {'id': 4, 'name': 'Integração de mudanças', 'description': 'Integração das mudanças e melhorias implementadas', 'phase_id': 2},
+            {'id': 5, 'name': 'Coleta de métricas', 'description': 'Coleta contínua de métricas e indicadores', 'phase_id': 3},
+            {'id': 6, 'name': 'Análise de resultados', 'description': 'Análise dos resultados obtidos nas atividades', 'phase_id': 3},
+            {'id': 7, 'name': 'Identificação de melhorias', 'description': 'Identificação de oportunidades de melhoria', 'phase_id': 4},
+            {'id': 8, 'name': 'Implementação de melhorias', 'description': 'Implementação das melhorias identificadas', 'phase_id': 4},
+            {'id': 9, 'name': 'Revisão de processos', 'description': 'Revisão contínua dos processos e metodologias', 'phase_id': 4},
+            {'id': 10, 'name': 'Documentação de lições aprendidas', 'description': 'Registro e compartilhamento de lições aprendidas', 'phase_id': 4},
+            {'id': 11, 'name': 'Treinamento e desenvolvimento', 'description': 'Programas de treinamento e desenvolvimento de equipes', 'phase_id': 1},
+            {'id': 12, 'name': 'Comunicação e feedback', 'description': 'Canais de comunicação e coleta de feedback', 'phase_id': 3},
+            {'id': 13, 'name': 'Melhoria contínua e inovação', 'description': 'Foco em melhoria contínua e inovação organizacional', 'phase_id': 4},
+        ]
+        
+        for activity_data in activities_data:
+            activity, created = ContinuousActivity.objects.get_or_create(
+                id=activity_data['id'],
+                defaults={
+                    'name': activity_data['name'],
+                    'description': activity_data['description'],
+                    'continuous_phase_id': activity_data['phase_id']
+                }
+            )
+            status = '✓ Criado' if created else '→ Existente'
+            self.stdout.write(f'  {status}: {activity.name}')
+
+        # ============================================================
+        # 19. Criar Categories (Practitioners Eye) - MOVED FROM 27
+        # ============================================================
+        self.stdout.write(self.style.WARNING('➤ Criando Categories (PractitionersEye)...'))
+        categories_data = [
+            {'id': 1, 'name': 'Colaboração', 'description': 'Dimensão de Colaboração'},
+            {'id': 2, 'name': 'Comunicação', 'description': 'Dimensão de Comunicação'},
+            {'id': 3, 'name': 'Liderança', 'description': 'Dimensão de Liderança'},
+            {'id': 4, 'name': 'Inovação', 'description': 'Dimensão de Inovação'},
+            {'id': 5, 'name': 'Qualidade', 'description': 'Dimensão de Qualidade'},
+        ]
+
+        for cat_data in categories_data:
+            category, created = Category.objects.get_or_create(
+                id=cat_data['id'],
+                defaults={
+                    'name': cat_data['name'],
+                    'description': cat_data['description']
+                }
+            )
+            status = '✓ Criado' if created else '→ Existente'
+            self.stdout.write(f'  {status}: {category.name}')
+
+        # ============================================================
+        # 20. Criar Elements (PractitionersEye) - MOVED FROM 28
+        # ============================================================
+        self.stdout.write(self.style.WARNING('➤ Criando Elements (PractitionersEye)...'))
+        elements_data = [
+            {'id': 1, 'name': 'Trabalho em Equipe', 'description': 'Capacidade de trabalhar em equipe', 'dimension_id': 1},
+            {'id': 2, 'name': 'Compartilhamento de Conhecimento', 'description': 'Capacidade de compartilhar conhecimento', 'dimension_id': 1},
+            {'id': 3, 'name': 'Clareza na Comunicação', 'description': 'Comunicação clara e eficaz', 'dimension_id': 2},
+            {'id': 4, 'name': 'Escuta Ativa', 'description': 'Capacidade de ouvir e compreender', 'dimension_id': 2},
+            {'id': 5, 'name': 'Visão Estratégica', 'description': 'Visão estratégica e orientação', 'dimension_id': 3},
+            {'id': 6, 'name': 'Tomada de Decisão', 'description': 'Capacidade de tomar decisões', 'dimension_id': 3},
+            {'id': 7, 'name': 'Criatividade', 'description': 'Capacidade de gerar ideias criativas', 'dimension_id': 4},
+            {'id': 8, 'name': 'Melhoria Contínua', 'description': 'Foco em melhoria contínua', 'dimension_id': 4},
+            {'id': 9, 'name': 'Controle de Qualidade', 'description': 'Atenção à qualidade', 'dimension_id': 5},
+            {'id': 10, 'name': 'Atenção ao Detalhe', 'description': 'Precisão e atenção aos detalhes', 'dimension_id': 5},
+        ]
+
+        for elem_data in elements_data:
+            element, created = Element.objects.get_or_create(
+                id=elem_data['id'],
+                defaults={
+                    'name': elem_data['name'],
+                    'description': elem_data['description'],
+                    'dimension_id': elem_data['dimension_id']
+                }
+            )
+            status = '✓ Criado' if created else '→ Existente'
+            self.stdout.write(f'  {status}: {element.name}')
+
+        # ============================================================
+        # 21. Criar Questionnaire Statements
         # ============================================================
         self.stdout.write(self.style.WARNING('➤ Criando Questionnaire Statements...'))
         statements_data = [
-            {'id': 1, 'code': 'AO.01', 'text': 'Papéis envolvidos no processo de desenvolvimento ágil (e.g., Scrum Master, Product Owner, Desenvolvedor e Tester) existem na organização.', 'sth_stage_id': 1},
-            {'id': 2, 'code': 'AO.02', 'text': 'As equipes dos projetos incluem um papel (p.ex., product owner) que é responsável por representar o cliente e participa ativamente nos projetos.', 'sth_stage_id': 1},
-            {'id': 3, 'code': 'AO.03', 'text': 'As equipes dos projetos são pequenas (geralmente entre 4 e 8 desenvolvedores), autoorganizadas e multidisciplinares.', 'sth_stage_id': 1},
-            {'id': 4, 'code': 'AO.04', 'text': 'Com o intuito de entregar valor para o cliente, os requisitos são definidos e priorizados de acordo com as necessidades do cliente, são periodicamente revisados e mudanças são absorvidas em iterações do processo de desenvolvimento.', 'sth_stage_id': 1},
-            {'id': 5, 'code': 'AO.05', 'text': 'O escopo do projeto é definido gradativamente, utilizando-se um Product Backlog (ou artefato equivalente).', 'sth_stage_id': 1},
-            {'id': 6, 'code': 'AO.06', 'text': 'Estimativas de esforço são realizadas pela equipe de desenvolvimento (ou em conjunto com ela) considerando-se tarefas curtas para implementar um conjunto de requisitos selecionados (e não o projeto como um todo).', 'sth_stage_id': 1},
-            {'id': 7, 'code': 'AO.07', 'text': 'Estimativas de custos são estabelecidas com base nas estimativas de esforço, considerando-se o esforço necessário para implementar um conjunto de requisitos selecionados (e não o projeto como um todo).', 'sth_stage_id': 1},
-            {'id': 8, 'code': 'AO.08', 'text': 'O processo de desenvolvimento é ágil, sendo realizado de forma iterativa, em ciclos curtos (p.ex., duas semanas), nos quais requisitos do produto definidos em um Product Backlog (ou artefato equivalente) são selecionados, registrados em um Sprint Backlog (ou artefato equivalente) e desenvolvidos.', 'sth_stage_id': 1},
-            {'id': 9, 'code': 'AO.09', 'text': 'Há critérios de aceitação claros para os requisitos do software e eles são usados para avaliar os artefatos produzidos (p.ex., funcionalidades) e definir se estão "prontos".', 'sth_stage_id': 1},
-            {'id': 10, 'code': 'AO.10', 'text': 'O cliente recebe novas versões do produto com frequência (após um ou mais ciclos curtos de desenvolvimento), incluindo novas funcionalidades definidas de acordo com as necessidades do cliente.', 'sth_stage_id': 1},
-            {'id': 11, 'code': 'AO.11', 'text': 'O processo de desenvolvimento (ágil) está alinhado ao negócio da organização e isso é percebido pela entrega de valor ao cliente e pela sua satisfação com o produto entregue.', 'sth_stage_id': 1},
-            {'id': 12, 'code': 'AO.12', 'text': 'Há pelo menos um papel (p.ex., tech lead, analista de qualidade) responsável pela qualidade dos artefatos produzidos e do produto final.', 'sth_stage_id': 1},
-            {'id': 13, 'code': 'AO.13', 'text': 'Os stakeholders do projeto (incluindo o cliente) são estimulados a refletir sobre seu sobre seu papel e suas responsabilidades no projeto.', 'sth_stage_id': 1},
-            {'id': 14, 'code': 'AO.14', 'text': 'A equipe do projeto possui autonomia para tomar decisões técnicas no projeto.', 'sth_stage_id': 1},
-            {'id': 15, 'code': 'AO.15', 'text': 'Frequentemente (p.ex.., diariamente, a cada dois ou três dias) a equipe se reúne e reflete sobre o progresso do desenvolvimento no âmbito do que foi definido para o time-box corrente e ajusta as tarefas se necessário (p.ex., em daily ou stand up meetings).', 'sth_stage_id': 1},
-            {'id': 16, 'code': 'AO.16', 'text': 'A equipe se reúne com frequência ao longo do projeto para discutir sobre melhorias no produto, no processo ou nas ferramentas usadas (p.ex., em reunião de retrospectiva).', 'sth_stage_id': 1},
-            {'id': 17, 'code': 'AO.17', 'text': 'A equipe se reúne com frequência ao longo do projeto para discutir sobre melhorias nas competências dos membros da equipe (p.ex., em reunião de retrospectiva).', 'sth_stage_id': 1},
-            {'id': 18, 'code': 'AO.18', 'text': 'O processo de desenvolvimento (ágil) é avaliado e melhorado continuamente.', 'sth_stage_id': 1},
-            {'id': 19, 'code': 'AO.19', 'text': 'Boas práticas de programação são adotadas (p.ex., código coletivo, codificação padronizada, programação em pares, revisão de código).', 'sth_stage_id': 1},
-            {'id': 20, 'code': 'AO.20', 'text': 'Boas práticas de testes (p.ex., teste automatizado, desenvolvimento orientado a testes) são adotadas.', 'sth_stage_id': 1},
-            {'id': 21, 'code': 'AO.21', 'text': 'Dados são coletados para métricas que permitem avaliar aspectos da qualidade dos artefatos produzidos e do produto (p.ex., complexidade ciclomática, quantidade de code smells).', 'sth_stage_id': 1},
-            {'id': 22, 'code': 'AO.22', 'text': 'Dados são coletados para métricas que permitem avaliar aspectos de desempenho do processo de desenvolvimento ágil (p.ex., work in progress, velocidade).', 'sth_stage_id': 1},
-            {'id': 23, 'code': 'AO.23', 'text': 'Dados produzidos ao longo do processo de desenvolvimento (p.ex., data de início das tarefas, data de conclusão das tarefas, pontos de história das tarefas) são armazenados em um (ou mais) repositório de dados.', 'sth_stage_id': 1},
-            {'id': 24, 'code': 'AO.24', 'text': 'Dados armazenados no(s) repositório(s) de dados são usados para melhorar o produto e o processo de desenvolvimento ágil.', 'sth_stage_id': 1},
-            {'id': 25, 'code': 'AO.25', 'text': 'Decisões nos projetos são tomadas com base em dados presentes no(s) repositório(s) de dados.', 'sth_stage_id': 1},
-            {'id': 26, 'code': 'AO.26', 'text': 'São realizadas ações para compartilhar conhecimento relevante ao desenvolvimento ágil (p.ex., palestras internas, tutoriais, repositórios de conhecimento, implementação de guilds).', 'sth_stage_id': 1},
-            {'id': 27, 'code': 'CI.01', 'text': 'A arquitetura do software é modular de forma a permitir a realização de testes automatizados.', 'sth_stage_id': 2},
-            {'id': 28, 'code': 'CI.02', 'text': 'A arquitetura do software é modular de forma a permitir a realização de builds automatizados.', 'sth_stage_id': 2},
-            {'id': 29, 'code': 'CI.03', 'text': 'O código é integrado constantemente e automaticamente.', 'sth_stage_id': 2},
-            {'id': 30, 'code': 'CI.04', 'text': 'Testes são executados automaticamente, periodicamente (p.ex., sempre que código novo é integrado), em um ambiente de teste, para verificar a qualidade do código (p.ex., cobertura, corretude).', 'sth_stage_id': 2},
-            {'id': 31, 'code': 'CI.05', 'text': 'Testes automatizados são utilizados para avaliar se o software implementado atende os requisitos estabelecidos.', 'sth_stage_id': 2},
-            {'id': 32, 'code': 'CI.06', 'text': 'Builds ocorrem frequentemente e automaticamente.', 'sth_stage_id': 2},
-            {'id': 33, 'code': 'CI.07', 'text': 'Builds são cancelados caso um ou mais testes falhem.', 'sth_stage_id': 2},
-            {'id': 34, 'code': 'CI.08', 'text': 'Há controle de versões dos artefatos de software (p.ex., código, teste, scripts etc.) em um repositório.', 'sth_stage_id': 2},
-            {'id': 35, 'code': 'CI.09', 'text': 'Boas práticas de check in são aplicadas no trunk de desenvolvimento (p.ex., uso de ferramentas como GitFlow e Toogle Feature).', 'sth_stage_id': 2},
-            {'id': 36, 'code': 'CI.10', 'text': 'Há práticas que permitem que organizações ou pessoas externas ao projeto atuem na implementação do produto (i.e., produzam e integrem código ao produto sendo desenvolvido).', 'sth_stage_id': 2},
-            {'id': 37, 'code': 'CI.11', 'text': 'Dados são coletados para métricas que permitem avaliar o processo de integração contínua (p.ex., quantidade de builds cancelados, quantidade de integrações de código realizadas).', 'sth_stage_id': 2},
-            {'id': 38, 'code': 'CI.12', 'text': 'Dados produzidos nos ambientes de integração contínua (p.ex., data das builds, quantidade de testes executados e percentual de cobertura)  são armazenados em um (ou mais) repositório de dados.', 'sth_stage_id': 2},
-            {'id': 39, 'code': 'CI.13', 'text': 'O processo de integração contínua (incluindo a realização de testes automatizados) é avaliado e melhorado continuamente.', 'sth_stage_id': 2},
-            {'id': 40, 'code': 'CI.14', 'text': 'Dados armazenados no(s) repositório(s) de dados são usados para melhorar o produto e o processo de integração contínua.', 'sth_stage_id': 2},
-            {'id': 41, 'code': 'CI.15', 'text': 'São realizadas ações para compartilhar conhecimento relacionado a integração contínua (p.ex., palestras internas, tutoriais, repositórios de conhecimento, implementação de guilds).', 'sth_stage_id': 2},
-            {'id': 42, 'code': 'CD.01', 'text': 'Os principais clientes/consumidores são identificados e participam do processo de desenvolvimento, influenciando nas funcionalidades que serão produzidas e entregues.', 'sth_stage_id': 3},
-            {'id': 43, 'code': 'CD.02', 'text': 'Há um fluxo de informação claro entre Desenvolvimento e Operação, permitindo que novas funcionalidades desenvolvidas entrem em operação automaticamente.', 'sth_stage_id': 3},
-            {'id': 44, 'code': 'CD.03', 'text': 'A entrega de novas funcionalidades é realizada automaticamente e por releases.', 'sth_stage_id': 3},
-            {'id': 45, 'code': 'CD.04', 'text': 'Há um fluxo de informação claro entre Operação e Negócio, permitindo que novas necessidades dos clientes/consumidores e oportunidades de negócio sejam identificadas a partir da entrega de novas funcionalidades.', 'sth_stage_id': 3},
-            {'id': 46, 'code': 'CD.05', 'text': 'A arquitetura do software permite realizar entrega (deploy) de funcionalidades de forma independente.', 'sth_stage_id': 3},
-            {'id': 47, 'code': 'CD.06', 'text': 'Clientes/consumidores recebem novas funcionalidades com frequência, inclusive, em ciclos mais curtos do que o time-box que costuma ser estabelecido no processo de desenvolvimento.', 'sth_stage_id': 3},
-            {'id': 48, 'code': 'CD.07', 'text': 'Os clientes podem realizar testes no produto assim que é feita a entrega (deploy) de novas funcionalidades.', 'sth_stage_id': 3},
-            {'id': 49, 'code': 'CD.08', 'text': 'O modelo de negócio da organização é constantemente avaliado e revisto (quando necessário) com base em informações dos clientes/consumidores.', 'sth_stage_id': 3},
-            {'id': 50, 'code': 'CD.09', 'text': 'Estratégias de marketing são constantemente avaliadas e revistas (quando necessário) com base em informações dos lead customers (clientes/consumidores mais relevantes para a organização).', 'sth_stage_id': 3},
-            {'id': 51, 'code': 'CD.10', 'text': 'Estratégias de venda são constantemente avaliadas e revistas (quando necessário) com base em informações dos lead customers (clientes/consumidores mais relevantes para a organização).', 'sth_stage_id': 3},
-            {'id': 52, 'code': 'CD.11', 'text': 'Alinhamento entre o desenvolvimento dos produtos e o negócio da organização é mantido através de verificações contínuas, em ciclos curtos.', 'sth_stage_id': 3},
-            {'id': 53, 'code': 'CD.12', 'text': 'Alinhamento entre o desenvolvimento dos produtos e o negócio da organização é mantido através de verificações contínuas, em ciclos curtos e baseando-se em dados.', 'sth_stage_id': 3},
-            {'id': 54, 'code': 'CD.13', 'text': 'Dados são coletados para métricas que permitem avaliar o processo de entrega contínua  (p.ex., quantidade de releases, densidade de defeitos nas releases).', 'sth_stage_id': 3},
-            {'id': 55, 'code': 'CD.14', 'text': 'Dados produzidos nos ambientes de entrega contínua (p.ex., data das releases e versão do software entregue)  são armazenados em um (ou mais) repositório de dados.', 'sth_stage_id': 3},
-            {'id': 56, 'code': 'CD.15', 'text': 'O  processo de entrega contínua é avaliado e melhorado continuamente.', 'sth_stage_id': 3},
-            {'id': 57, 'code': 'CD.16', 'text': 'Dados armazenados no(s) repositório(s) de dados são usados para melhorar o produto e o processo de entrega contínua.', 'sth_stage_id': 3},
-            {'id': 58, 'code': 'CD.17', 'text': 'São realizadas ações para compartilhar conhecimento relacionado a entrega contínua (e.g., palestras internas, tutoriais, repositórios de conhecimento, implementação de guilds).', 'sth_stage_id': 3},
-            {'id': 59, 'code': 'IS.01', 'text': 'Feedbacks (dados e opiniões) dos clientes/consumidores são capturados contínua e automaticamente e armazenados em um (ou mais) repositório de dados de clientes/consumidores.', 'sth_stage_id': 4},
-            {'id': 60, 'code': 'IS.02', 'text': 'Feedbacks (dados e opiniões) dos clientes/consumidores (capturados contínua e automaticamente) são utilizados para melhorar os produtos (melhorar funcionalidades existentes e identificar novas).', 'sth_stage_id': 4},
-            {'id': 61, 'code': 'IS.03', 'text': 'A organização identifica novas oportunidades de negócio com base nos feedbacks capturados automaticamente dos clientes/consumidores.', 'sth_stage_id': 4},
-            {'id': 62, 'code': 'IS.04', 'text': 'Feedbacks (dados e opiniões) dos clientes/consumidores (capturados contínua e automaticamente) são usados para experimentação e inovação.', 'sth_stage_id': 4},
-            {'id': 63, 'code': 'IS.05', 'text': 'Experimentos (p.ex., testes A/B) são realizados com os clientes/consumidores para melhorar os produtos.', 'sth_stage_id': 4},
-            {'id': 64, 'code': 'IS.06', 'text': 'São adotadas tecnologias (p.ex.., tecnologias de nuvem) que permitem potencializar a experimentação.', 'sth_stage_id': 4},
-            {'id': 65, 'code': 'IS.07', 'text': 'A organização continuamente experimenta novas tecnologias e metodologias.', 'sth_stage_id': 4},
-            {'id': 66, 'code': 'IS.08', 'text': 'Há um fluxo de informação claro entre o nível estratégico e a área de desenvolvimento da organização, permitindo que dados dos clientes/consumidores (capturados contínua e automaticamente) sejam utilizados de forma alinhada na tomada de decisões técnicas e de negócio.', 'sth_stage_id': 4},
-            {'id': 67, 'code': 'IS.09', 'text': 'Dados do repositório de dados dos clientes/consumidores são usados na tomada de decisão pela área de desenvolvimento de software.', 'sth_stage_id': 4},
-            {'id': 68, 'code': 'IS.10', 'text': 'Dados do(s) repositório(a) de dados dos clientes/consumidores são usados na tomada de decisão pela área de negócios.', 'sth_stage_id': 4},
-            {'id': 69, 'code': 'IS.11', 'text': 'Alinhamento entre o desenvolvimento dos produtos e o negócio da organização é mantido através de verificações contínuas, em ciclos curtos e baseando-se em dados do(s) repositório(a) de dados dos clientes/consumidores.', 'sth_stage_id': 4},
-            {'id': 70, 'code': 'IS.12', 'text': 'O processo de experimentação contínua é avaliado e melhorado continuamente.', 'sth_stage_id': 4},
-            {'id': 71, 'code': 'IS.13', 'text': 'São realizadas ações para compartilhar conhecimento relacionado a experimentação  contínua (e.g., palestras internas, tutoriais, repositórios de conhecimento, implementação de guilds).', 'sth_stage_id': 4},
+            {'id': 1, 'code': 'AO.01', 'text': 'Papéis envolvidos no processo de desenvolvimento ágil (e.g., Scrum Master, Product Owner, Desenvolvedor e Tester) existem na organização.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 1},
+            {'id': 2, 'code': 'AO.02', 'text': 'As equipes dos projetos incluem um papel (p.ex., product owner) que é responsável por representar o cliente e participa ativamente nos projetos.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 1},
+            {'id': 3, 'code': 'AO.03', 'text': 'As equipes dos projetos são pequenas (geralmente entre 4 e 8 desenvolvedores), autoorganizadas e multidisciplinares.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 1},
+            {'id': 4, 'code': 'AO.04', 'text': 'Com o intuito de entregar valor para o cliente, os requisitos são definidos e priorizados de acordo com as necessidades do cliente, são periodicamente revisados e mudanças são absorvidas em iterações do processo de desenvolvimento.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 4},
+            {'id': 5, 'code': 'AO.05', 'text': 'O escopo do projeto é definido gradativamente, utilizando-se um Product Backlog (ou artefato equivalente).', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 6},
+            {'id': 6, 'code': 'AO.06', 'text': 'Estimativas de esforço são realizadas pela equipe de desenvolvimento (ou em conjunto com ela) considerando-se tarefas curtas para implementar um conjunto de requisitos selecionados (e não o projeto como um todo).', 'sth_stage_id': 1, 'continuous_activity_id': 2, 'pe_element_id': 6},
+            {'id': 7, 'code': 'AO.07', 'text': 'Estimativas de custos são estabelecidas com base nas estimativas de esforço, considerando-se o esforço necessário para implementar um conjunto de requisitos selecionados (e não o projeto como um todo).', 'sth_stage_id': 1, 'continuous_activity_id': 2, 'pe_element_id': 6},
+            {'id': 8, 'code': 'AO.08', 'text': 'O processo de desenvolvimento é ágil, sendo realizado de forma iterativa, em ciclos curtos (p.ex., duas semanas), nos quais requisitos do produto definidos em um Product Backlog (ou artefato equivalente) são selecionados, registrados em um Sprint Backlog (ou artefato equivalente) e desenvolvidos.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 1},
+            {'id': 9, 'code': 'AO.09', 'text': 'Há critérios de aceitação claros para os requisitos do software e eles são usados para avaliar os artefatos produzidos (p.ex., funcionalidades) e definir se estão "prontos".', 'sth_stage_id': 1, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 10, 'code': 'AO.10', 'text': 'O cliente recebe novas versões do produto com frequência (após um ou mais ciclos curtos de desenvolvimento), incluindo novas funcionalidades definidas de acordo com as necessidades do cliente.', 'sth_stage_id': 1, 'continuous_activity_id': 4, 'pe_element_id': 4},
+            {'id': 11, 'code': 'AO.11', 'text': 'O processo de desenvolvimento (ágil) está alinhado ao negócio da organização e isso é percebido pela entrega de valor ao cliente e pela sua satisfação com o produto entregue.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 5},
+            {'id': 12, 'code': 'AO.12', 'text': 'Há pelo menos um papel (p.ex., tech lead, analista de qualidade) responsável pela qualidade dos artefatos produzidos e do produto final.', 'sth_stage_id': 1, 'continuous_activity_id': 6, 'pe_element_id': 9},
+            {'id': 13, 'code': 'AO.13', 'text': 'Os stakeholders do projeto (incluindo o cliente) são estimulados a refletir sobre seu sobre seu papel e suas responsabilidades no projeto.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 3},
+            {'id': 14, 'code': 'AO.14', 'text': 'A equipe do projeto possui autonomia para tomar decisões técnicas no projeto.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 6},
+            {'id': 15, 'code': 'AO.15', 'text': 'Frequentemente (p.ex.., diariamente, a cada dois ou três dias) a equipe se reúne e reflete sobre o progresso do desenvolvimento no âmbito do que foi definido para o time-box corrente e ajusta as tarefas se necessário (p.ex., em daily ou stand up meetings).', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 3},
+            {'id': 16, 'code': 'AO.16', 'text': 'A equipe se reúne com frequência ao longo do projeto para discutir sobre melhorias no produto, no processo ou nas ferramentas usadas (p.ex., em reunião de retrospectiva).', 'sth_stage_id': 1, 'continuous_activity_id': 13, 'pe_element_id': 8},
+            {'id': 17, 'code': 'AO.17', 'text': 'A equipe se reúne com frequência ao longo do projeto para discutir sobre melhorias nas competências dos membros da equipe (p.ex., em reunião de retrospectiva).', 'sth_stage_id': 1, 'continuous_activity_id': 13, 'pe_element_id': 2},
+            {'id': 18, 'code': 'AO.18', 'text': 'O processo de desenvolvimento (ágil) é avaliado e melhorado continuamente.', 'sth_stage_id': 1, 'continuous_activity_id': 13, 'pe_element_id': 8},
+            {'id': 19, 'code': 'AO.19', 'text': 'Boas práticas de programação são adotadas (p.ex., código coletivo, codificação padronizada, programação em pares, revisão de código).', 'sth_stage_id': 1, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 20, 'code': 'AO.20', 'text': 'Boas práticas de testes (p.ex., teste automatizado, desenvolvimento orientado a testes) são adotadas.', 'sth_stage_id': 1, 'continuous_activity_id': 6, 'pe_element_id': 9},
+            {'id': 21, 'code': 'AO.21', 'text': 'Dados são coletados para métricas que permitem avaliar aspectos da qualidade dos artefatos produzidos e do produto (p.ex., complexidade ciclomática, quantidade de code smells).', 'sth_stage_id': 1, 'continuous_activity_id': 6, 'pe_element_id': 9},
+            {'id': 22, 'code': 'AO.22', 'text': 'Dados são coletados para métricas que permitem avaliar aspectos de desempenho do processo de desenvolvimento ágil (p.ex., work in progress, velocidade).', 'sth_stage_id': 1, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 23, 'code': 'AO.23', 'text': 'Dados produzidos ao longo do processo de desenvolvimento (p.ex., data de início das tarefas, data de conclusão das tarefas, pontos de história das tarefas) são armazenados em um (ou mais) repositório de dados.', 'sth_stage_id': 1, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 24, 'code': 'AO.24', 'text': 'Dados armazenados no(s) repositório(s) de dados são usados para melhorar o produto e o processo de desenvolvimento ágil.', 'sth_stage_id': 1, 'continuous_activity_id': 13, 'pe_element_id': 8},
+            {'id': 25, 'code': 'AO.25', 'text': 'Decisões nos projetos são tomadas com base em dados presentes no(s) repositório(s) de dados.', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 6},
+            {'id': 26, 'code': 'AO.26', 'text': 'São realizadas ações para compartilhar conhecimento relevante ao desenvolvimento ágil (p.ex., palestras internas, tutoriais, repositórios de conhecimento, implementação de guilds).', 'sth_stage_id': 1, 'continuous_activity_id': 1, 'pe_element_id': 2},
+            {'id': 27, 'code': 'CI.01', 'text': 'A arquitetura do software é modular de forma a permitir a realização de testes automatizados.', 'sth_stage_id': 2, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 28, 'code': 'CI.02', 'text': 'A arquitetura do software é modular de forma a permitir a realização de builds automatizados.', 'sth_stage_id': 2, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 29, 'code': 'CI.03', 'text': 'O código é integrado constantemente e automaticamente.', 'sth_stage_id': 2, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 30, 'code': 'CI.04', 'text': 'Testes são executados automaticamente, periodicamente (p.ex., sempre que código novo é integrado), em um ambiente de teste, para verificar a qualidade do código (p.ex., cobertura, corretude).', 'sth_stage_id': 2, 'continuous_activity_id': 6, 'pe_element_id': 9},
+            {'id': 31, 'code': 'CI.05', 'text': 'Testes automatizados são utilizados para avaliar se o software implementado atende os requisitos estabelecidos.', 'sth_stage_id': 2, 'continuous_activity_id': 6, 'pe_element_id': 9},
+            {'id': 32, 'code': 'CI.06', 'text': 'Builds ocorrem frequentemente e automaticamente.', 'sth_stage_id': 2, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 33, 'code': 'CI.07', 'text': 'Builds são cancelados caso um ou mais testes falhem.', 'sth_stage_id': 2, 'continuous_activity_id': 6, 'pe_element_id': 9},
+            {'id': 34, 'code': 'CI.08', 'text': 'Há controle de versões dos artefatos de software (p.ex., código, teste, scripts etc.) em um repositório.', 'sth_stage_id': 2, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 35, 'code': 'CI.09', 'text': 'Boas práticas de check in são aplicadas no trunk de desenvolvimento (p.ex., uso de ferramentas como GitFlow e Toogle Feature).', 'sth_stage_id': 2, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 36, 'code': 'CI.10', 'text': 'Há práticas que permitem que organizações ou pessoas externas ao projeto atuem na implementação do produto (i.e., produzam e integrem código ao produto sendo desenvolvido).', 'sth_stage_id': 2, 'continuous_activity_id': 3, 'pe_element_id': 1},
+            {'id': 37, 'code': 'CI.11', 'text': 'Dados são coletados para métricas que permitem avaliar o processo de integração contínua (p.ex., quantidade de builds cancelados, quantidade de integrações de código realizadas).', 'sth_stage_id': 2, 'continuous_activity_id': 3, 'pe_element_id': 10},
+            {'id': 38, 'code': 'CI.12', 'text': 'Dados produzidos nos ambientes de integração contínua (p.ex., data das builds, quantidade de testes executados e percentual de cobertura)  são armazenados em um (ou mais) repositório de dados.', 'sth_stage_id': 2, 'continuous_activity_id': 5, 'pe_element_id': 10},
+            {'id': 39, 'code': 'CI.13', 'text': 'O processo de integração contínua (incluindo a realização de testes automatizados) é avaliado e melhorado continuamente.', 'sth_stage_id': 2, 'continuous_activity_id': 13, 'pe_element_id': 8},
+            {'id': 40, 'code': 'CI.14', 'text': 'Dados armazenados no(s) repositório(s) de dados são usados para melhorar o produto e o processo de integração contínua.', 'sth_stage_id': 2, 'continuous_activity_id': 13, 'pe_element_id': 8},
+            {'id': 41, 'code': 'CI.15', 'text': 'São realizadas ações para compartilhar conhecimento relacionado a integração contínua (p.ex., palestras internas, tutoriais, repositórios de conhecimento, implementação de guilds).', 'sth_stage_id': 2, 'continuous_activity_id': 12, 'pe_element_id': 2},
+            {'id': 42, 'code': 'CD.01', 'text': 'Os principais clientes/consumidores são identificados e participam do processo de desenvolvimento, influenciando nas funcionalidades que serão produzidas e entregues.', 'sth_stage_id': 3, 'continuous_activity_id': 4, 'pe_element_id': 4},
+            {'id': 43, 'code': 'CD.02', 'text': 'Há um fluxo de informação claro entre Desenvolvimento e Operação, permitindo que novas funcionalidades desenvolvidas entrem em operação automaticamente.', 'sth_stage_id': 3, 'continuous_activity_id': 4, 'pe_element_id': 3},
+            {'id': 44, 'code': 'CD.03', 'text': 'A entrega de novas funcionalidades é realizada automaticamente e por releases.', 'sth_stage_id': 3, 'continuous_activity_id': 4, 'pe_element_id': 10},
+            {'id': 45, 'code': 'CD.04', 'text': 'Há um fluxo de informação claro entre Operação e Negócio, permitindo que novas necessidades dos clientes/consumidores e oportunidades de negócio sejam identificadas a partir da entrega de novas funcionalidades.', 'sth_stage_id': 3, 'continuous_activity_id': 12, 'pe_element_id': 3},
+            {'id': 46, 'code': 'CD.05', 'text': 'A arquitetura do software permite realizar entrega (deploy) de funcionalidades de forma independente.', 'sth_stage_id': 3, 'continuous_activity_id': 4, 'pe_element_id': 10},
+            {'id': 47, 'code': 'CD.06', 'text': 'Clientes/consumidores recebem novas funcionalidades com frequência, inclusive, em ciclos mais curtos do que o time-box que costuma ser estabelecido no processo de desenvolvimento.', 'sth_stage_id': 3, 'continuous_activity_id': 4, 'pe_element_id': 5},
+            {'id': 48, 'code': 'CD.07', 'text': 'Os clientes podem realizar testes no produto assim que é feita a entrega (deploy) de novas funcionalidades.', 'sth_stage_id': 3, 'continuous_activity_id': 5, 'pe_element_id': 4},
+            {'id': 49, 'code': 'CD.08', 'text': 'O modelo de negócio da organização é constantemente avaliado e revisto (quando necessário) com base em informações dos clientes/consumidores.', 'sth_stage_id': 3, 'continuous_activity_id': 12, 'pe_element_id': 5},
+            {'id': 50, 'code': 'CD.09', 'text': 'Estratégias de marketing são constantemente avaliadas e revistas (quando necessário) com base em informações dos lead customers (clientes/consumidores mais relevantes para a organização).', 'sth_stage_id': 3, 'continuous_activity_id': 12, 'pe_element_id': 5},
+            {'id': 51, 'code': 'CD.10', 'text': 'Estratégias de venda são constantemente avaliadas e revistas (quando necessário) com base em informações dos lead customers (clientes/consumidores mais relevantes para a organização).', 'sth_stage_id': 3, 'continuous_activity_id': 12, 'pe_element_id': 5},
+            {'id': 52, 'code': 'CD.11', 'text': 'Alinhamento entre o desenvolvimento dos produtos e o negócio da organização é mantido através de verificações contínuas, em ciclos curtos.', 'sth_stage_id': 3, 'continuous_activity_id': 12, 'pe_element_id': 5},
+            {'id': 53, 'code': 'CD.12', 'text': 'Alinhamento entre o desenvolvimento dos produtos e o negócio da organização é mantido através de verificações contínuas, em ciclos curtos e baseando-se em dados.', 'sth_stage_id': 3, 'continuous_activity_id': 5, 'pe_element_id': 10},
+            {'id': 54, 'code': 'CD.13', 'text': 'Dados são coletados para métricas que permitem avaliar o processo de entrega contínua  (p.ex., quantidade de releases, densidade de defeitos nas releases).', 'sth_stage_id': 3, 'continuous_activity_id': 5, 'pe_element_id': 10},
+            {'id': 55, 'code': 'CD.14', 'text': 'Dados produzidos nos ambientes de entrega contínua (p.ex., data das releases e versão do software entregue)  são armazenados em um (ou mais) repositório de dados.', 'sth_stage_id': 3, 'continuous_activity_id': 5, 'pe_element_id': 10},
+            {'id': 56, 'code': 'CD.15', 'text': 'O  processo de entrega contínua é avaliado e melhorado continuamente.', 'sth_stage_id': 3, 'continuous_activity_id': 13, 'pe_element_id': 8},
+            {'id': 57, 'code': 'CD.16', 'text': 'Dados armazenados no(s) repositório(s) de dados são usados para melhorar o produto e o processo de entrega contínua.', 'sth_stage_id': 3, 'continuous_activity_id': 13, 'pe_element_id': 8},
+            {'id': 58, 'code': 'CD.17', 'text': 'São realizadas ações para compartilhar conhecimento relacionado a entrega contínua (e.g., palestras internas, tutoriais, repositórios de conhecimento, implementação de guilds).', 'sth_stage_id': 3, 'continuous_activity_id': 12, 'pe_element_id': 2},
+            {'id': 59, 'code': 'IS.01', 'text': 'Feedbacks (dados e opiniões) dos clientes/consumidores são capturados contínua e automaticamente e armazenados em um (ou mais) repositório de dados de clientes/consumidores.', 'sth_stage_id': 4, 'continuous_activity_id': 5, 'pe_element_id': 10},
+            {'id': 60, 'code': 'IS.02', 'text': 'Feedbacks (dados e opiniões) dos clientes/consumidores (capturados contínua e automaticamente) são utilizados para melhorar os produtos (melhorar funcionalidades existentes e identificar novas).', 'sth_stage_id': 4, 'continuous_activity_id': 9, 'pe_element_id': 7},
+            {'id': 61, 'code': 'IS.03', 'text': 'A organização identifica novas oportunidades de negócio com base nos feedbacks capturados automaticamente dos clientes/consumidores.', 'sth_stage_id': 4, 'continuous_activity_id': 9, 'pe_element_id': 7},
+            {'id': 62, 'code': 'IS.04', 'text': 'Feedbacks (dados e opiniões) dos clientes/consumidores (capturados contínua e automaticamente) são usados para experimentação e inovação.', 'sth_stage_id': 4, 'continuous_activity_id': 9, 'pe_element_id': 7},
+            {'id': 63, 'code': 'IS.05', 'text': 'Experimentos (p.ex., testes A/B) são realizados com os clientes/consumidores para melhorar os produtos.', 'sth_stage_id': 4, 'continuous_activity_id': 9, 'pe_element_id': 7},
+            {'id': 64, 'code': 'IS.06', 'text': 'São adotadas tecnologias (p.ex.., tecnologias de nuvem) que permitem potencializar a experimentação.', 'sth_stage_id': 4, 'continuous_activity_id': 9, 'pe_element_id': 7},
+            {'id': 65, 'code': 'IS.07', 'text': 'A organização continuamente experimenta novas tecnologias e metodologias.', 'sth_stage_id': 4, 'continuous_activity_id': 9, 'pe_element_id': 7},
+            {'id': 66, 'code': 'IS.08', 'text': 'Há um fluxo de informação claro entre o nível estratégico e a área de desenvolvimento da organização, permitindo que dados dos clientes/consumidores (capturados contínua e automaticamente) sejam utilizados de forma alinhada na tomada de decisões técnicas e de negócio.', 'sth_stage_id': 4, 'continuous_activity_id': 12, 'pe_element_id': 3},
+            {'id': 67, 'code': 'IS.09', 'text': 'Dados do repositório de dados dos clientes/consumidores são usados na tomada de decisão pela área de desenvolvimento de software.', 'sth_stage_id': 4, 'continuous_activity_id': 5, 'pe_element_id': 10},
+            {'id': 68, 'code': 'IS.10', 'text': 'Dados do(s) repositório(a) de dados dos clientes/consumidores são usados na tomada de decisão pela área de negócios.', 'sth_stage_id': 4, 'continuous_activity_id': 5, 'pe_element_id': 6},
+            {'id': 69, 'code': 'IS.11', 'text': 'Alinhamento entre o desenvolvimento dos produtos e o negócio da organização é mantido através de verificações contínuas, em ciclos curtos e baseando-se em dados do(s) repositório(a) de dados dos clientes/consumidores.', 'sth_stage_id': 4, 'continuous_activity_id': 12, 'pe_element_id': 5},
+            {'id': 70, 'code': 'IS.12', 'text': 'O processo de experimentação contínua é avaliado e melhorado continuamente.', 'sth_stage_id': 4, 'continuous_activity_id': 13, 'pe_element_id': 8},
+            {'id': 71, 'code': 'IS.13', 'text': 'São realizadas ações para compartilhar conhecimento relacionado a experimentação  contínua (e.g., palestras internas, tutoriais, repositórios de conhecimento, implementação de guilds).', 'sth_stage_id': 4, 'continuous_activity_id': 12, 'pe_element_id': 2},
         ]
 
         for stmt_data in statements_data:
+            sth_stage = Stage.objects.get(id=stmt_data['sth_stage_id']) if stmt_data.get('sth_stage_id') else None
+            continuous_activity = ContinuousActivity.objects.get(id=stmt_data.get('continuous_activity_id')) if stmt_data.get('continuous_activity_id') else None
+            pe_element = Element.objects.get(id=stmt_data.get('pe_element_id')) if stmt_data.get('pe_element_id') else None
+            
             stmt, created = Statement.objects.get_or_create(
                 id=stmt_data['id'],
                 defaults={
                     'code': stmt_data['code'],
                     'text': stmt_data['text'],
-                    'sth_stage_id': stmt_data['sth_stage_id'],
+                    'sth_stage': sth_stage,
+                    'continuous_activity': continuous_activity,
+                    'pe_element': pe_element,
                 }
             )
             status = '✓ Criado' if created else '→ Existente'
             self.stdout.write(f'  {status}: {stmt.code}')
 
         # ============================================================
-        # 18. Criar Questionnaire Answers
+        # 22. Criar Questionnaire Answers
         # ============================================================
         self.stdout.write(self.style.WARNING('➤ Criando Questionnaire Answers...'))
         from apps.questionnaire.models import Answer
@@ -592,7 +705,7 @@ class Command(BaseCommand):
                     self.stdout.write(f'  ✓ Criadas {answer_id - 11881} respostas...')
 
         # ============================================================
-        # 19. Criar Feedback Questionnaires
+        # 23. Criar Feedback Questionnaires
         # ============================================================
         self.stdout.write(self.style.WARNING('➤ Criando Feedback Questionnaires...'))
         from apps.questionnaire.models import FeedbackQuestionnaire
@@ -615,7 +728,7 @@ class Command(BaseCommand):
             self.stdout.write(f'  {status}: FeedbackQuestionnaire {fq.id}')
 
         # ============================================================
-        # 20. Criar Questionnaires
+        # 24. Criar Questionnaires
         # ============================================================
         self.stdout.write(self.style.WARNING('➤ Criando Questionnaires...'))
         from apps.questionnaire.models import Questionnaire
@@ -641,7 +754,7 @@ class Command(BaseCommand):
             self.stdout.write(f'  {status}: Questionnaire {q.id}')
 
         # ============================================================
-        # 21. Criar Questionnaire Excels
+        # 25. Criar Questionnaire Excels
         # ============================================================
         self.stdout.write(self.style.WARNING('➤ Criando Questionnaire Excels...'))
         from apps.questionnaire.models import QuestionnaireExcel
@@ -668,56 +781,7 @@ class Command(BaseCommand):
             self.stdout.write(f'  {status}: QuestionnaireExcel {excel_q.id}')
 
         # ============================================================
-        # 22. Criar Continuous Phases
-        # ============================================================
-        self.stdout.write(self.style.WARNING('➤ Criando Continuous Phases...'))
-        phases_data = [
-            {'id': 1, 'name': 'Planejamento', 'description': 'Fase de planejamento das atividades contínuas'},
-            {'id': 2, 'name': 'Implementação', 'description': 'Fase de implementação das atividades contínuas'},
-            {'id': 3, 'name': 'Monitoramento', 'description': 'Fase de monitoramento e avaliação contínua'},
-            {'id': 4, 'name': 'Melhoria', 'description': 'Fase de melhoria contínua baseada em feedbacks'},
-        ]
-        
-        for phase_data in phases_data:
-            phase, created = ContinuousPhase.objects.get_or_create(
-                id=phase_data['id'],
-                defaults={
-                    'name': phase_data['name'],
-                    'description': phase_data['description']
-                }
-            )
-            status = '✓ Criado' if created else '→ Existente'
-            self.stdout.write(f'  {status}: {phase.name}')
-
-        # ============================================================
-        # 23. Criar Continuous Activities
-        # ============================================================
-        self.stdout.write(self.style.WARNING('➤ Criando Continuous Activities...'))
-        activities_data = [
-            {'id': 1, 'name': 'Reuniões de planejamento', 'description': 'Reuniões periódicas para planejamento de atividades', 'phase_id': 1},
-            {'id': 2, 'name': 'Definição de objetivos', 'description': 'Definição clara dos objetivos das atividades contínuas', 'phase_id': 1},
-            {'id': 3, 'name': 'Desenvolvimento de soluções', 'description': 'Desenvolvimento prático das soluções planejadas', 'phase_id': 2},
-            {'id': 4, 'name': 'Integração de mudanças', 'description': 'Integração das mudanças e melhorias implementadas', 'phase_id': 2},
-            {'id': 5, 'name': 'Coleta de métricas', 'description': 'Coleta contínua de métricas e indicadores', 'phase_id': 3},
-            {'id': 6, 'name': 'Análise de resultados', 'description': 'Análise dos resultados obtidos nas atividades', 'phase_id': 3},
-            {'id': 7, 'name': 'Identificação de melhorias', 'description': 'Identificação de oportunidades de melhoria', 'phase_id': 4},
-            {'id': 8, 'name': 'Implementação de melhorias', 'description': 'Implementação das melhorias identificadas', 'phase_id': 4},
-        ]
-        
-        for activity_data in activities_data:
-            activity, created = ContinuousActivity.objects.get_or_create(
-                id=activity_data['id'],
-                defaults={
-                    'name': activity_data['name'],
-                    'description': activity_data['description'],
-                    'continuous_phase_id': activity_data['phase_id']
-                }
-            )
-            status = '✓ Criado' if created else '→ Existente'
-            self.stdout.write(f'  {status}: {activity.name}')
-
-        # ============================================================
-        # 24. Criar STH Stage Experience Levels
+        # 26. Criar STH Stage Experience Levels
         # ============================================================
         self.stdout.write(self.style.WARNING('➤ Criando STH Stage Experience Levels...'))
         sth_exp_level_id = 1
@@ -738,7 +802,7 @@ class Command(BaseCommand):
                     self.stdout.write(f'  ✓ Criados {sth_exp_level_id - 1} STH Stage Experience Levels...')
 
         # ============================================================
-        # 25. Criar STH Stage Knowledge Levels
+        # 27. Criar STH Stage Knowledge Levels
         # ============================================================
         self.stdout.write(self.style.WARNING('➤ Criando STH Stage Knowledge Levels...'))
         sth_know_level_id = 1
@@ -759,7 +823,7 @@ class Command(BaseCommand):
                     self.stdout.write(f'  ✓ Criados {sth_know_level_id - 1} STH Stage Knowledge Levels...')
 
         # ============================================================
-        # 26. Criar Teams
+        # 28. Criar Teams
         # ============================================================
         self.stdout.write(self.style.WARNING('➤ Criando Teams...'))
         teams_data = [
@@ -782,5 +846,4 @@ class Command(BaseCommand):
             status = '✓ Criado' if created else '→ Existente'
             self.stdout.write(f'  {status}: {team.name}')
 
-        self.stdout.write('')
-        self.stdout.write(self.style.SUCCESS('✓ Banco de dados populado com sucesso!'))
+
